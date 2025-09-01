@@ -54,6 +54,56 @@ jobs:
         with:
           fail_ci_if_error: true
           verbose: true
+  webassembly-6-1:
+    name: "Build and Test on WebAssembly"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+      - name: Setup Swift 6.1
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
+      - name: Install WebAssembly SDK
+        run: |
+          swift sdk install "https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.1-RELEASE/swift-wasm-6.1-RELEASE-wasm32-unknown-wasi.artifactbundle.zip" --checksum "7550b4c77a55f4b637c376f5d192f297fe185607003a6212ad608276928db992"
+      - name: Build Framework for WebAssembly
+        run: swift build -c release --swift-sdk wasm32-unknown-wasi --enable-code-coverage -Xswiftc -enable-testing
+      - name: Test Framework on WebAssembly
+        run: swift test -c release --swift-sdk wasm32-unknown-wasi --enable-code-coverage -Xswiftc -enable-testing
+      - name: Prepare Coverage Reports
+        run: |
+          llvm-cov export -format="lcov" .build/wasm32-unknown-wasi/release/SynchronousLockPackageTests.wasm -instr-profile .build/wasm32-unknown-wasi/release/codecov/default.profdata > coverage.lcov
+      - name: Upload Coverage Reports
+        if: success()
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          verbose: true
+  android-6-1:
+    name: "Build and Test on Android"  
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+      - name: Test Swift Package on Android
+        uses: swift-android-sdk/swift-android-action@v2
+        with:
+          swift-version: "6.1"
+          extra-swift-test-flags: "--enable-code-coverage -Xswiftc -enable-testing"
+      - name: Prepare Coverage Reports
+        run: |
+          llvm-cov export -format="lcov" .build/x86_64-unknown-linux-android/release/SynchronousLockPackageTests.xctest -instr-profile .build/x86_64-unknown-linux-android/release/codecov/default.profdata > coverage.lcov
+      - name: Upload Coverage Reports
+        if: success()
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          verbose: true
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
