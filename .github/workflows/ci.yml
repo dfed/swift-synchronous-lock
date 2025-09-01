@@ -56,7 +56,7 @@ jobs:
           verbose: true
   webassembly-6-1:
     name: "Build and Test on WebAssembly"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -68,9 +68,10 @@ jobs:
           swift-version: "6.1"
       - name: Install carton
         run: |
-          git clone https://github.com/swiftwasm/carton
-          cd carton && swift build -c release
-          echo "$(pwd)/.build/release" >> $GITHUB_PATH
+          curl -L https://github.com/swiftwasm/carton/releases/latest/download/carton-24.04-x86_64.tar.gz | tar -xz
+          mkdir -p ~/.local/bin
+          mv carton ~/.local/bin/
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Test with carton
         run: carton test
       - name: Prepare Coverage Reports
