@@ -96,6 +96,7 @@ jobs:
         with:
           swift-version: "6.1"
           swift-test-flags: "--enable-code-coverage -Xswiftc -enable-testing"
+          android-api-level: 28
       - name: Prepare Coverage Reports
         run: |
           llvm-cov export -format="lcov" .build/x86_64-unknown-linux-android/release/SynchronousLockPackageTests.xctest -instr-profile .build/x86_64-unknown-linux-android/release/codecov/default.profdata > coverage.lcov
