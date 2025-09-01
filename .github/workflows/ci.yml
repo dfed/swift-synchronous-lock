@@ -56,53 +56,44 @@ jobs:
           verbose: true
   webassembly-6-1:
     name: "Build and Test on WebAssembly"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container: swift:6.1
     permissions:
       contents: read
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      - name: Setup Swift 6.1
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: "6.1"
       - name: Install WebAssembly SDK
         run: |
           swift sdk install "https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.1-RELEASE/swift-wasm-6.1-RELEASE-wasm32-unknown-wasi.artifactbundle.zip" --checksum "7550b4c77a55f4b637c376f5d192f297fe185607003a6212ad608276928db992"
-      - name: Build and Test WebAssembly
-        run: swift test -c release --swift-sdk wasm32-unknown-wasi --enable-code-coverage -Xswiftc -enable-testing
-      - name: Prepare Coverage Reports
+      - name: Build for WebAssembly
+        run: swift build -c release --swift-sdk wasm32-unknown-wasi -Xswiftc -enable-testing
+      - name: Build WebAssembly Tests
+        run: swift build -c release --swift-sdk wasm32-unknown-wasi --build-tests -Xswiftc -enable-testing
+      - name: Install wasmtime
         run: |
-          llvm-cov export -format="lcov" .build/wasm32-unknown-wasi/release/SynchronousLockPackageTests.wasm -instr-profile .build/wasm32-unknown-wasi/release/codecov/default.profdata > coverage.lcov
-      - name: Upload Coverage Reports
-        if: success()
-        uses: codecov/codecov-action@v5
-        with:
-          fail_ci_if_error: true
-          verbose: true
+          curl https://wasmtime.dev/install.sh -sSf | bash
+          echo "/root/.wasmtime/bin" >> $GITHUB_PATH
+      - name: Run WebAssembly Tests
+        run: wasmtime --dir . .build/wasm32-unknown-wasi/release/SynchronousLockPackageTests.wasm
   android-6-1:
-    name: "Build and Test on Android"  
+    name: "Build and Test on Android"
     runs-on: ubuntu-latest
+    container: swift:6.1
     permissions:
       contents: read
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      - name: Test Swift Package on Android
-        uses: swift-android-sdk/swift-android-action@v2
-        with:
-          swift-version: "6.1"
-          swift-test-flags: "--enable-code-coverage -Xswiftc -enable-testing"
-          android-api-level: 28
-      - name: Prepare Coverage Reports
+      - name: Install Android SDK
         run: |
-          llvm-cov export -format="lcov" .build/x86_64-unknown-linux-android/release/SynchronousLockPackageTests.xctest -instr-profile .build/x86_64-unknown-linux-android/release/codecov/default.profdata > coverage.lcov
-      - name: Upload Coverage Reports
-        if: success()
-        uses: codecov/codecov-action@v5
-        with:
-          fail_ci_if_error: true
-          verbose: true
+          swift sdk install "https://github.com/swift-android-sdk/swift-android-toolchain/releases/download/6.1-RELEASE/swift-6.1-RELEASE-android-24-0.4.artifactbundle.zip" --checksum "edd5d1a8a0c74de5fb7aff8b02b5b3fb8e4c38f0cbabc0e8b4b89eb9e7b6bc8e"
+      - name: Build for Android
+        run: swift build -c release --swift-sdk android-24-0.4 -Xswiftc -enable-testing
+      - name: Build Android Tests
+        run: swift build -c release --swift-sdk android-24-0.4 --build-tests -Xswiftc -enable-testing
+      - name: Run Android Tests
+        run: swift test -c release --swift-sdk android-24-0.4 -Xswiftc -enable-testing
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
