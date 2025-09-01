@@ -65,13 +65,13 @@ jobs:
         uses: actions/checkout@v5
       - name: Install Android SDK
         run: |
-          swift sdk install "https://github.com/swift-android-sdk/swift-android-toolchain/releases/download/6.1-RELEASE/swift-6.1-RELEASE-android-24-0.4.artifactbundle.zip" --checksum "edd5d1a8a0c74de5fb7aff8b02b5b3fb8e4c38f0cbabc0e8b4b89eb9e7b6bc8e"
+          swift sdk install "https://github.com/finagolfin/swift-android-sdk/releases/download/6.1.2/swift-6.1.2-RELEASE-android-24-0.1.artifactbundle.tar.gz" --checksum "6d817c947870e8c85e6cab9a6ab6d7313b50fa5a20b890c396723c0b16ab32d9"
       - name: Build for Android
-        run: swift build -c release --swift-sdk android-24-0.4 -Xswiftc -enable-testing
+        run: swift build -c release --swift-sdk android-24-0.1 -Xswiftc -enable-testing
       - name: Build Android Tests
-        run: swift build -c release --swift-sdk android-24-0.4 --build-tests -Xswiftc -enable-testing
+        run: swift build -c release --swift-sdk android-24-0.1 --build-tests -Xswiftc -enable-testing
       - name: Run Android Tests
-        run: swift test -c release --swift-sdk android-24-0.4 -Xswiftc -enable-testing
+        run: swift test -c release --swift-sdk android-24-0.1 -Xswiftc -enable-testing
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
