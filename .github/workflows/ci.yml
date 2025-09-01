@@ -66,13 +66,13 @@ jobs:
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: "6.1"
-      - name: Install WebAssembly SDK
+      - name: Install carton
         run: |
-          swift sdk install "https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.1-RELEASE/swift-wasm-6.1-RELEASE-wasm32-unknown-wasi.artifactbundle.zip" --checksum "7550b4c77a55f4b637c376f5d192f297fe185607003a6212ad608276928db992"
-      - name: Build Framework for WebAssembly
-        run: swift build -c release --swift-sdk wasm32-unknown-wasi --enable-code-coverage -Xswiftc -enable-testing
-      - name: Test Framework on WebAssembly
-        run: swift test -c release --swift-sdk wasm32-unknown-wasi --enable-code-coverage -Xswiftc -enable-testing
+          git clone https://github.com/swiftwasm/carton
+          cd carton && swift build -c release
+          echo "$(pwd)/.build/release" >> $GITHUB_PATH
+      - name: Test with carton
+        run: carton test
       - name: Prepare Coverage Reports
         run: |
           llvm-cov export -format="lcov" .build/wasm32-unknown-wasi/release/SynchronousLockPackageTests.wasm -instr-profile .build/wasm32-unknown-wasi/release/codecov/default.profdata > coverage.lcov
