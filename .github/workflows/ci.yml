@@ -66,14 +66,12 @@ jobs:
       - name: Install Android SDK
         run: |
           swift sdk install "https://github.com/finagolfin/swift-android-sdk/releases/download/6.1.2/swift-6.1.2-RELEASE-android-24-0.1.artifactbundle.tar.gz" --checksum "6d817c947870e8c85e6cab9a6ab6d7313b50fa5a20b890c396723c0b16ab32d9"
-      - name: List available SDKs
-        run: swift sdk list
       - name: Build for Android
-        run: swift build -c release --swift-sdk android-24-0.1 -Xswiftc -enable-testing
+        run: swift build -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 -Xswiftc -enable-testing
       - name: Build Android Tests
-        run: swift build -c release --swift-sdk android-24-0.1 --build-tests -Xswiftc -enable-testing
+        run: swift build -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 --build-tests -Xswiftc -enable-testing
       - name: Run Android Tests
-        run: swift test -c release --swift-sdk android-24-0.1 -Xswiftc -enable-testing
+        run: swift test -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 -Xswiftc -enable-testing
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
