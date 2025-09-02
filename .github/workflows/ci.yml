@@ -55,7 +55,7 @@ jobs:
           fail_ci_if_error: true
           verbose: true
   android-6-1:
-    name: "Build and test for Android"
+    name: "Build and Test for Android"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -64,6 +64,12 @@ jobs:
         uses: actions/checkout@v5
       - name: Build Swift Package for Android
         run: docker run --pull=always --rm -v "$PWD":/host -w /host registry.gitlab.com/finestructure/spi-images:android-6.1-latest swift test --swift-sdk aarch64-unknown-linux-android28 -Xswiftc -enable-testing
+      - name: Upload Coverage Reports
+        if: success()
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          verbose: true
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
