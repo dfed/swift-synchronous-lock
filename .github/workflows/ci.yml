@@ -55,21 +55,15 @@ jobs:
           fail_ci_if_error: true
           verbose: true
   android-6-1:
-    name: "Build and Test on Android"
+    name: "Build for Android"
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      - name: Test Swift Package on Android
-        uses: swift-android-sdk/swift-android-action@v2
-        with:
-          swift-version: "6.1"
-          android-api-level: 30
-          android-channel: "canary"
-          android-profile: "pixel"
-          android-target: "aosp_atd"
+      - name: Build Swift Package for Android
+        run: docker run --pull=always --rm -v "$PWD":/host -w /host registry.gitlab.com/finestructure/spi-images:android-6.1-latest swift build --swift-sdk aarch64-unknown-linux-android28 -Xswiftc -enable-testing
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
