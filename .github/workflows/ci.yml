@@ -63,9 +63,13 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v5
       - name: Test Swift Package on Android
-        uses: skiptools/swift-android-action@v2
+        uses: swift-android-sdk/swift-android-action@v2
         with:
           swift-version: "6.1"
+          android-api-level: 30
+          android-channel: "canary"
+          android-profile: "pixel"
+          android-target: "aosp_atd"
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
