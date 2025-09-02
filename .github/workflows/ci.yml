@@ -57,21 +57,17 @@ jobs:
   android-6-1:
     name: "Build and Test on Android"
     runs-on: ubuntu-latest
-    container: swift:6.1
     permissions:
       contents: read
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      - name: Install Android SDK
-        run: |
-          swift sdk install "https://github.com/finagolfin/swift-android-sdk/releases/download/6.1.2/swift-6.1.2-RELEASE-android-24-0.1.artifactbundle.tar.gz" --checksum "6d817c947870e8c85e6cab9a6ab6d7313b50fa5a20b890c396723c0b16ab32d9"
-      - name: Build for Android
-        run: swift build -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 -Xswiftc -enable-testing
-      - name: Build Android Tests
-        run: swift build -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 --build-tests -Xswiftc -enable-testing
-      - name: Run Android Tests
-        run: swift test -c release --swift-sdk swift-6.1.2-RELEASE-android-24-0.1 -Xswiftc -enable-testing
+      - name: Test Swift Package on Android
+        uses: skiptools/swift-android-action@v2
+        with:
+          swift-version: "6.1"
+          android-api-level: 30
+          run-tests: true
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
