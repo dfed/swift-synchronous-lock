@@ -66,8 +66,6 @@ jobs:
         uses: skiptools/swift-android-action@v2
         with:
           swift-version: "6.1"
-          android-api-level: 30
-          run-tests: true
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
